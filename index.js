@@ -3,8 +3,8 @@ var http = require("http").Server(app);
 var io = require("socket.io")(http);
 
 //generic host and port initializaion
-var host = process.env.IP;
-var port = process.env.PORT;
+var host = process.env.OPENSHIFT_NODEJS_IP || process.env.IP;
+var port = process.env.OPENSHIFT_NODEJS_PORT || process.env.PORT;
 
 app.get('/', function(req,res){
     res.sendFile(__dirname + '/index.html');
