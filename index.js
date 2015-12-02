@@ -3,9 +3,9 @@ var http = require("http").Server(app);
 var io = require("socket.io")(http);
 
 //generic host and port initializaion
-var host = process.env.OPENSHIFT_NODEJS_IP || process.env.IP;
-var port = process.env.OPENSHIFT_NODEJS_PORT || process.env.PORT;
-
+app.set('port', process.env.OPENSHIFT_NODEJS_PORT || process.env.PORT || 3000);
+app.set('ip', process.env.OPENSHIFT_NODEJS_IP || process.env.IP || "127.0.0.1");
+ 
 app.get('/', function(req,res){
     res.sendFile(__dirname + '/index.html');
 });
@@ -25,7 +25,7 @@ io.on('connection', function(socket){
 
 
 
-http.listen(port,host, function(){
-    console.log('listening on *:' + port);
+http.listen(app.get('port'), app.get('ip'), function(){
+    console.log('listening on *:' + app.get('po'));
     
 });
