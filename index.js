@@ -25,7 +25,7 @@ io.on('connection', function(socket){
 
 
 
-http.listen(port, function(){
+http.listen(port,host, function(){
     console.log('listening on *:' + port);
     
 });
