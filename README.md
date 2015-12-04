@@ -1,2 +1,2 @@
 # websockets realtime
-Basic websockets realtime examples
+Basic realtime Collabprative Text Editor. Have a bite.
