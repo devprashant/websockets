@@ -3,25 +3,94 @@
 <head>
   <meta charset="utf-8">
   <title>Collabrative Editing </title>
+  <style>
+    .text_edit {
+    	width: 500px;
+    	height: 300px;
+    	resize: none;
+    }
+
+    .view_text {
+    	width: 500px;
+    }
+  </style>
 </head>
 <body>
   <div id="devicesOnline"></div>
   
-  <textarea type="text" id="shareSomething"></textarea>
-  <div id="giveSomething"/>
+  <!-- Knapper -->
+	<input type="button" value="B" onclick="mod_selection('[b]','[/b]')" />
+	<input type="button" value="I" onclick="mod_selection('[i]','[/i]')" />
+	<input type="button" value="U" onclick="mod_selection('[u]','[/u]')" />
+	<br />
+  
+  <!-- TextArea -->
+  <textarea class="text_edit" type="text" id="shareSomething"></textarea>
+  
+  <!-- Empty div to put text in -->
+  <div class="view_text"id="giveSomething"/>
   
   <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
   <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
   <script>
+  function mod_selection (val1,val2) {
+			// Get the text area
+			var textArea = document.getElementById('shareSomething');
+			console.log('Text area selection end:' + textArea.selectionEnd);
+			// Do we even have a selection?
+			if (typeof(textArea.selectionStart) != "undefined") {
+				// Split the text in three pieces - the selection, and what comes before and after.
+				var begin = textArea.value.substr(0, textArea.selectionStart);
+              console.log('Text area selection start:' + textArea.selectionStart);
+				var selection = textArea.value.substr(textArea.selectionStart, textArea.selectionEnd - textArea.selectionStart);
+              console.log('Text area selection :' + textArea.selectionStart + ":" + (textArea.selectionEnd - textArea.selectionStart));
+				var end = textArea.value.substr(textArea.selectionEnd);
+              
+              console.log('Text area selection end:' + textArea.selectionEnd);
+				
+				// Insert the tags between the three pieces of text.
+				textArea.value = begin + val1 + selection + val2 + end;
+			}
+		}
+		
+		function send_text(){
+		  // Find html elements.
+			var textArea = document.getElementById('shareSomething');
+			
+			// Put the text in a variable so we can manipulate it.
+			var text = textArea.value;
+			
+		 // Exchange newlines for <br />
+			text = text.replace(/\n/gi, "<br />");
+			
+			// Basic BBCodes.
+			text = text.replace(/\[b\]/gi, "<b>");
+			text = text.replace(/\[\/b\]/gi, "</b>");
+			
+			text = text.replace(/\[i\]/gi, "<i>");
+			text = text.replace(/\[\/i\]/gi, "</i>");
+			
+			text = text.replace(/\[u\]/gi, "<u>");
+			text = text.replace(/\[\/u\]/gi, "</u>");
+			
+			return text;
+			
+		}
+		
+		function view_text (text) {
+			var div = document.getElementById('giveSomething');
+		
+			// Print the text in the div made for it.
+			div.innerHTML = text;
+		}
     var socket = io.connect("https://websocket-prashantdawar.c9users.io");
  
-    $('#shareSomething').keypress(function(evt){
-      $('#giveSomething').text($('#shareSomething').val());
-      socket.emit('trigger',$('#shareSomething').val());
+    $('#shareSomething').keypress(function(evt){ 
+      socket.emit('trigger',send_text());
     });
 
-  socket.on('trigger', function(msg){
-    $('#giveSomething').text(msg);
+  socket.on('trigger', function(text){
+      view_text(text);
   });
   
   socket.on('online', function(devices){
