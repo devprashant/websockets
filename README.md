@@ -1,4 +1,2 @@
-# websockets
-websockets practice begin
-
-A Simple Chat client
+# websockets realtime
+Basic websockets realtime examples
