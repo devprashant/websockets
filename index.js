@@ -9,24 +9,20 @@ app.set('ip', process.env.OPENSHIFT_NODEJS_IP || process.env.IP || "127.0.0.1");
 app.get('/', function(req,res){
     res.sendFile(__dirname + '/index.html');
 });
-var users = 0;
+var devices = 0;
 io.on('connection', function(socket){
-    console.log('a user connected');
-    users++;
-    io.emit('online', users);
+    console.log('a device connected');
+      devices++;
+      io.emit('online', devices);
+      
+    socket.on('trigger', function(msg){
+       io.emit('trigger',msg); 
+    });
+    
     socket.on('disconnect', function(){
-        users--;
-        console.log('user disconnected');
-        io.emit('online', users);
-    });
-    
-    socket.on('chat message', function(msg) {
-        console.log('message: ' + msg );
-        io.emit('chat message',msg);
-    });
-    
-    socket.on('nickName', function(nick){
-       io.emit('user joined', nick); 
+        devices--;
+        console.log('a device disconnected');
+        io.emit('online', devices);
     });
     
 });
